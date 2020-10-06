@@ -29,6 +29,24 @@ public class Maze {
         this.matrixSize = matrixHeight * matrixWidth;
     }
 
+    public Maze(String string) {
+        String[] lines = string.split("\n");
+
+        this.height = lines.length;
+        this.width = lines[0].split(" ").length;
+
+        this.maze = new int[height][width];
+        for (int i = 0; i < height; i++) {
+            String[] signs = lines[i].split(" ");
+            for (int j = 0; j < width; j++) {
+                maze[i][j] = Integer.parseInt(signs[j]);
+            }
+        }
+        this.matrixHeight = height % 2 == 0 ? (this.height - 1) / 2 : this.height / 2;
+        this.matrixWidth = width % 2 == 0 ? (this.width - 1) / 2 : this.width / 2;
+        this.matrixSize = matrixHeight * matrixWidth;
+    }
+
     public void print() {
         for (int i = 0; i < this.height; i++) {
             for (int j = 0; j < this.width; j++) {
@@ -38,7 +56,7 @@ public class Maze {
         }
     }
 
-    public void setMaze() {
+    public void generateMaze() {
 
         // Generating edges
         for (int i = 0; i < matrixSize; i++) {
@@ -73,8 +91,6 @@ public class Maze {
         } while (result.size() + 1 < matrixSize);
 
 
-
-
         // Digging tunnels according to the Edges
         for (Edge edge : result) {
             int y1 = edge.point1 / matrixWidth * 2 + 1;
@@ -96,5 +112,18 @@ public class Maze {
         if (this.width % 2 == 0) {
             maze[exit][width - 2] = 0;
         }
+    }
+
+    public String toString() {
+        StringBuilder string = new StringBuilder();
+        for (int i = 0; i < height; i++) {
+            string.append(maze[i][0]);
+            for (int j = 1; j < width; j++) {
+                string.append(" ");
+                string.append(maze[i][j]);
+            }
+            string.append("\n");
+        }
+        return string.toString();
     }
 }
