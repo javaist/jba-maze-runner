@@ -56,6 +56,19 @@ public class Maze {
         }
     }
 
+    private void print(int[][] maze) {
+        for (int i = 0; i < this.height; i++) {
+            for (int j = 0; j < this.width; j++) {
+                if (maze[i][j] == -1) {
+                    System.out.print("//");
+                } else {
+                    System.out.print(maze[i][j] == 1 ? "\u2588\u2588" : "  ");
+                }
+            }
+            System.out.println();
+        }
+    }
+
     public void generateMaze() {
 
         // Generating edges
@@ -125,5 +138,72 @@ public class Maze {
             string.append("\n");
         }
         return string.toString();
+    }
+
+    public void escapeRoute() {
+        HashMap<Integer, Node> nodes = new HashMap<>();
+        Node start = null;
+        Node end = null;
+        int[][] clone = maze.clone();
+        for (int i = 0; i < height; i++) {
+            if (maze[i][0] == 0) {
+                clone[i][0] = -1;
+            }
+            if (maze[i][width - 1] == 0) {
+                clone[i][width - 1] = -1;
+                if (width % 2 == 0) {
+                    clone[i][width - 2] = -1;
+                }
+            }
+        }
+        for (int i = 0; i < matrixSize; i++) {
+//            int y1 = edge.point1 / matrixWidth * 2 + 1;
+//            int x1 = (edge.point1 % matrixWidth) * 2 + 1;
+            nodes.put(i, new Node(i, (i % matrixWidth) * 2 + 1, i / matrixWidth * 2 + 1));
+        }
+        for (int i = 0; i < matrixSize; i++) {
+            Node node = nodes.get(i);
+            // check for neighbours
+            if (clone[node.y][node.x - 1] == -1) {
+                start = node;
+            } else if (clone[node.y][node.x + 1] == -1) {
+                end = node;
+            }
+            // Left neighbour
+            if (clone[node.y][node.x - 1] == 0) {
+                node.addNode(nodes.get(i - 1));
+            }
+            // Right neighbour
+            if (clone[node.y][node.x + 1] == 0) {
+                node.addNode(nodes.get(i + 1));
+            }
+            // Top neighbour
+            if (clone[node.y - 1][node.x] == 0) {
+                node.addNode(nodes.get(i - matrixWidth));
+            }
+            // Bottom neighbour
+            if (clone[node.y + 1][node.x] == 0) {
+                node.addNode(nodes.get(i + matrixWidth));
+            }
+        }
+
+        ArrayList<Node> path = DFS.getPath(start, end);
+
+        int x1, x2, y1, y2, x, y;
+        for (int i = 0; i < path.size() - 1; i++) {
+            x1 = path.get(i).x;
+            y1 = path.get(i).y;
+            x2 = path.get(i + 1).x;
+            y2 = path.get(i + 1).y;
+            y = y1 == y2 ? y1 : (y1 + y2) / 2;
+            x = x1 == x2 ? x1 : (x1 + x2) / 2;
+
+            maze[y1][x1] = -1;
+            maze[y][x] = -1;
+
+        }
+        maze[path.get(path.size() - 1).y][path.get(path.size() - 1).x] = -1;
+
+        this.print(clone);
     }
 }

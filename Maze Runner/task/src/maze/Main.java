@@ -42,6 +42,9 @@ public class Main {
                 case 4:
                     maze.print();
                     break;
+                case 5:
+                    maze.escapeRoute();
+                    break;
                 case 0:
                     return;
                 default:
@@ -96,10 +99,11 @@ public class Main {
         if (maze != null) {
             System.out.println("3. Save the maze");
             System.out.println("4. Display the maze");
+            System.out.println("5. Find the escape");
         }
         System.out.println("0. Exit");
         int choice = Integer.parseInt(scanner.nextLine());
-        if (maze == null && choice > 2 && choice < 5) {
+        if (maze == null && choice > 2 && choice < 6) {
             return -1;
         }
         return choice;
